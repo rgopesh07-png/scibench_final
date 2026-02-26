@@ -132,13 +132,69 @@ def estimator():
     return render_template('estimator.html', cpus=cpus, gpus=gpus, data=data, better_rec=better_rec)
 
 # We will add the final 3 templates for these next:
+# --- REPLACE THE BOTTOM ROUTES IN APP.PY WITH THIS ---
+
 @app.route('/wizard', methods=['GET', 'POST'])
-def wizard(): return render_template('wizard.html', res=[])
+def wizard():
+    conn = get_db_connection()
+    res, task = [], request.form.get('task', '')
+    if request.method == 'POST':
+        col = 'cli' if task=='climate' else 'gen' if task=='genome' else 'phy'
+        query = f"SELECT h.name, h.price, b.{col} as score FROM hardware h JOIN benchmarks b ON h.id=b.id ORDER BY score DESC LIMIT 15"
+        res = [dict(r) for r in conn.execute(query).fetchall()] # Dict for Chart.js
+    conn.close()
+    return render_template('wizard.html', res=res, task=task)
+
 @app.route('/green', methods=['GET', 'POST'])
-def green(): return render_template('green.html')
+def green():
+    conn = get_db_connection()
+    cpus = conn.execute("SELECT * FROM hardware WHERE type='CPU' ORDER BY name").fetchall()
+    gpus = conn.execute("SELECT * FROM hardware WHERE type='GPU' ORDER BY name").fetchall()
+    data = None
+    if request.method == 'POST':
+        c_id, g_id = request.form.get('cpu'), request.form.get('gpu')
+        row = conn.execute("""SELECT c.name as cn, g.name as gn, (c.tdp+g.tdp) as watts, (bc.cli+bc.gen+bc.phy+bg.cli+bg.gen+bg.phy) as total 
+                              FROM hardware c JOIN benchmarks bc ON c.id=bc.id CROSS JOIN hardware g JOIN benchmarks bg ON g.id=bg.id 
+                              WHERE c.id=? AND g.id=?""", (c_id, g_id)).fetchone()
+        if row: 
+            data = {'cn': row['cn'], 'gn': row['gn'], 'watts': row['watts'], 'total': row['total'], 'eff': round(row['total']/row['watts'], 2) if row['watts']>0 else 0}
+    conn.close()
+    return render_template('green.html', cpus=cpus, gpus=gpus, data=data)
+
 @app.route('/thermal', methods=['GET', 'POST'])
-def thermal(): return render_template('thermal.html')
+def thermal():
+    conn = get_db_connection()
+    cpus = conn.execute("SELECT * FROM hardware WHERE type='CPU' ORDER BY name").fetchall()
+    gpus = conn.execute("SELECT * FROM hardware WHERE type='GPU' ORDER BY name").fetchall()
+    data = None
+    if request.method == 'POST':
+        c_id, g_id, nodes = request.form.get('cpu'), request.form.get('gpu'), int(request.form.get('nodes', 1))
+        row = conn.execute("SELECT (c.tdp+g.tdp) as watts, c.name as cn, g.name as gn FROM hardware c CROSS JOIN hardware g WHERE c.id=? AND g.id=?", (c_id, g_id)).fetchone()
+        if row:
+            total_watts = (row['watts'] + 100) * nodes
+            btu = total_watts * 3.412
+            data = {'cn': row['cn'], 'gn': row['gn'], 'nodes': nodes, 'btu': round(btu), 'ac': round(btu/12000, 2), 'cost': round(((total_watts*1.4)*24*30/1000)*8)}
+    conn.close()
+    return render_template('thermal.html', cpus=cpus, gpus=gpus, data=data)
+
 @app.route('/builder', methods=['GET', 'POST'])
-def builder(): return render_template('builder.html')
+def builder():
+    conn = get_db_connection()
+    cpus = conn.execute("SELECT * FROM hardware WHERE type='CPU' ORDER BY name").fetchall()
+    gpus = conn.execute("SELECT * FROM hardware WHERE type='GPU' ORDER BY name").fetchall()
+    data = None
+    if request.method == 'POST':
+        c_id, g_id = request.form.get('cpu'), request.form.get('gpu')
+        row = conn.execute("""SELECT c.name as cn, g.name as gn, (bc.cli+bg.cli) as cli, (bc.gen+bg.gen) as gen, (bc.phy+bg.phy) as phy, 
+                               (bc.cli+bc.gen+bc.phy+bg.cli+bg.gen+bg.phy) as total, (c.price+g.price) as price
+                               FROM hardware c JOIN benchmarks bc ON c.id=bc.id CROSS JOIN hardware g JOIN benchmarks bg ON g.id=bg.id 
+                               WHERE c.id=? AND g.id=?""", (c_id, g_id)).fetchone()
+        if row:
+            data = dict(row) # Dict for Chart.js
+    conn.close()
+    return render_template('builder.html', cpus=cpus, gpus=gpus, data=data)
+
+# Keep the if __name__ == '__main__': app.run(debug=True) at the very bottom!
 
 if __name__ == '__main__': app.run(debug=True)
+
