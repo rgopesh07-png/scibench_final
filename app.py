@@ -2,6 +2,7 @@ import os
 from flask import Flask, render_template, request
 import sqlite3
 import random
+import math
 
 app = Flask(__name__)
 
@@ -197,4 +198,5 @@ def builder():
 # Keep the if __name__ == '__main__': app.run(debug=True) at the very bottom!
 
 if __name__ == '__main__': app.run(debug=True)
+
 
