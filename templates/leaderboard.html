@@ -5,7 +5,7 @@
     <title>Leaderboard | SciBench</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { margin: 0; font-family: system-ui, sans-serif; color: #0f172a; }
+        body { margin: 0; font-family: system-ui, sans-serif; color: #0f172a; overflow-x: hidden;}
         .bg-vibrant-ambient { position: fixed; inset: 0; z-index: -2; background: linear-gradient(-45deg, #e0f2fe, #38bdf8, #bae6fd, #e0f2fe); background-size: 400% 400%; animation: ambientLight 15s ease infinite; }
         @keyframes ambientLight { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .star-pattern { position: fixed; inset: 0; z-index: -1; opacity: 0.5; background-image: radial-gradient(#64748b 1px, transparent 1px); background-size: 40px 40px; }
@@ -14,7 +14,11 @@
 </head>
 <body class="p-8 relative min-h-screen">
     <div class="bg-vibrant-ambient"></div><div class="star-pattern"></div>
-    <a href="/" class="text-4xl font-black text-sky-800 mb-10 block w-max hover:scale-105 transition-transform tracking-tight">SCIBENCH</a>
+    
+    <header class="flex justify-between items-center mb-10 max-w-7xl mx-auto">
+        <a href="/" class="text-4xl font-black text-sky-800 hover:scale-105 transition-transform tracking-tight">SCIBENCH</a>
+        <a href="/" class="bg-white border-2 border-sky-500 text-sky-700 font-bold py-2 px-6 rounded-xl shadow-lg hover:bg-sky-50 transition-colors">← Back to Dashboard</a>
+    </header>
 
     <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8">
         <aside class="lg:col-span-1 space-y-6">
@@ -32,9 +36,9 @@
                 <div class="flex justify-between items-center p-8 bg-sky-50 border-b-4 border-sky-200">
                     <h1 class="text-3xl font-black text-sky-900">Global Rankings</h1>
                     <div class="flex gap-3">
-                        <a href="?cat=ALL" class="px-5 py-2 rounded-xl text-sm font-black {% if cat=='ALL' %}bg-sky-700 text-white shadow-lg{% else %}bg-white border-2 border-slate-200 text-slate-700{% endif %}">ALL</a>
-                        <a href="?cat=CPU" class="px-5 py-2 rounded-xl text-sm font-black {% if cat=='CPU' %}bg-sky-700 text-white shadow-lg{% else %}bg-white border-2 border-slate-200 text-slate-700{% endif %}">CPU</a>
-                        <a href="?cat=GPU" class="px-5 py-2 rounded-xl text-sm font-black {% if cat=='GPU' %}bg-sky-700 text-white shadow-lg{% else %}bg-white border-2 border-slate-200 text-slate-700{% endif %}">GPU</a>
+                        <a href="?cat=ALL" class="px-5 py-2 rounded-xl text-sm font-black {% if cat=='ALL' %}bg-sky-700 text-white shadow-lg{% else %}bg-white border-2 border-slate-200 text-slate-700 hover:bg-slate-50{% endif %}">ALL</a>
+                        <a href="?cat=CPU" class="px-5 py-2 rounded-xl text-sm font-black {% if cat=='CPU' %}bg-sky-700 text-white shadow-lg{% else %}bg-white border-2 border-slate-200 text-slate-700 hover:bg-slate-50{% endif %}">CPU</a>
+                        <a href="?cat=GPU" class="px-5 py-2 rounded-xl text-sm font-black {% if cat=='GPU' %}bg-sky-700 text-white shadow-lg{% else %}bg-white border-2 border-slate-200 text-slate-700 hover:bg-slate-50{% endif %}">GPU</a>
                     </div>
                 </div>
                 <table class="w-full text-left">
@@ -55,6 +59,21 @@
                 <span class="text-slate-600 font-black text-lg">Page <span class="text-sky-700">{{ page }}</span> of {{ total_pages }}</span>
                 {% if page < total_pages %}<a href="?page={{ page+1 }}&cat={{ cat }}" class="px-8 py-3 bg-sky-100 text-sky-800 rounded-xl font-black hover:bg-sky-200 transition-colors border-2 border-sky-200">Next 15 →</a>{% else %}<div class="px-8 py-3 opacity-0">Spacer</div>{% endif %}
             </div>
+        </div>
+    </div>
+
+    <button onclick="document.getElementById('devModal').classList.remove('hidden')" class="fixed bottom-8 right-8 bg-sky-700 text-white font-black py-4 px-8 rounded-full shadow-2xl z-40 hover:scale-110 border-2 border-white transition-all">Team Leads</button>
+    <div id="devModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center transition-all">
+        <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl max-w-sm w-full relative border-4 border-sky-500">
+            <button onclick="document.getElementById('devModal').classList.add('hidden')" class="absolute top-6 right-8 text-3xl text-slate-400 hover:text-slate-800 font-bold">&times;</button>
+            <h3 class="font-black text-3xl mb-8 text-sky-700">Project Leads</h3>
+            <ul class="space-y-4 font-black text-slate-800 text-lg">
+                <li class="flex items-center gap-3"><span class="w-3 h-3 rounded-full bg-blue-500 shadow-md"></span>Gopesh Rajput</li>
+                <li class="flex items-center gap-3"><span class="w-3 h-3 rounded-full bg-cyan-500 shadow-md"></span>Piyush Datt</li>
+                <li class="flex items-center gap-3"><span class="w-3 h-3 rounded-full bg-emerald-500 shadow-md"></span>Abhinandan Singla</li>
+                <li class="flex items-center gap-3"><span class="w-3 h-3 rounded-full bg-purple-500 shadow-md"></span>Garvit Wadhadwan</li>
+                <li class="flex items-center gap-3"><span class="w-3 h-3 rounded-full bg-orange-500 shadow-md"></span>Gaurav Sharma</li>
+            </ul>
         </div>
     </div>
 </body>
