@@ -5,52 +5,55 @@
     <title>Leaderboard | SciBench</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #f8fafc; color: #0f172a; font-family: system-ui, sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid white; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05); }
+        body { margin: 0; font-family: system-ui, sans-serif; color: #0f172a; }
+        .bg-vibrant-ambient { position: fixed; inset: 0; z-index: -2; background: linear-gradient(-45deg, #e0f2fe, #38bdf8, #bae6fd, #e0f2fe); background-size: 400% 400%; animation: ambientLight 15s ease infinite; }
+        @keyframes ambientLight { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .star-pattern { position: fixed; inset: 0; z-index: -1; opacity: 0.5; background-image: radial-gradient(#64748b 1px, transparent 1px); background-size: 40px 40px; }
+        .vibrant-glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 2px solid #0284c7; box-shadow: 0 15px 35px rgba(2, 132, 199, 0.2); }
     </style>
 </head>
-<body class="p-8">
-    <a href="/" class="text-3xl font-black text-cyan-600 mb-10 block w-max hover:scale-105 transition-transform">SCIBENCH</a>
+<body class="p-8 relative min-h-screen">
+    <div class="bg-vibrant-ambient"></div><div class="star-pattern"></div>
+    <a href="/" class="text-4xl font-black text-sky-800 mb-10 block w-max hover:scale-105 transition-transform tracking-tight">SCIBENCH</a>
 
     <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8">
         <aside class="lg:col-span-1 space-y-6">
-            <div class="glass p-6 rounded-3xl">
-                <h3 class="text-cyan-600 font-bold uppercase text-xs mb-4 tracking-widest">Module Analysis</h3>
-                <p class="text-sm text-slate-600">Ranks the absolute performance ceiling of modern silicon.</p>
+            <div class="vibrant-glass p-6 rounded-3xl">
+                <h3 class="text-sky-700 font-black uppercase tracking-widest text-sm mb-4">Module Analysis</h3>
+                <p class="text-slate-900 font-bold">Ranks the absolute performance ceiling of modern silicon globally.</p>
             </div>
-            <div class="glass p-2 rounded-2xl shadow-md">
-                <p class="text-[10px] text-slate-400 mb-2 font-bold px-2 pt-1 uppercase">Architecture scaling</p>
+            <div class="vibrant-glass p-2 rounded-2xl">
                 <iframe class="w-full aspect-video rounded-xl" src="https://www.youtube.com/embed/E9O_4MLmBzc" frameborder="0" allowfullscreen></iframe>
             </div>
         </aside>
 
         <div class="lg:col-span-3">
-            <div class="glass rounded-3xl overflow-hidden mb-6">
-                <div class="flex justify-between items-center p-6 bg-white border-b border-slate-100">
-                    <h1 class="text-2xl font-black text-slate-800">Global Rankings</h1>
-                    <div class="flex gap-2">
-                        <a href="?cat=ALL" class="px-4 py-2 rounded-lg text-sm font-bold {% if cat=='ALL' %}bg-cyan-600 text-white{% else %}bg-slate-100 text-slate-600{% endif %}">ALL</a>
-                        <a href="?cat=CPU" class="px-4 py-2 rounded-lg text-sm font-bold {% if cat=='CPU' %}bg-cyan-600 text-white{% else %}bg-slate-100 text-slate-600{% endif %}">CPU</a>
-                        <a href="?cat=GPU" class="px-4 py-2 rounded-lg text-sm font-bold {% if cat=='GPU' %}bg-cyan-600 text-white{% else %}bg-slate-100 text-slate-600{% endif %}">GPU</a>
+            <div class="vibrant-glass rounded-3xl overflow-hidden mb-6 bg-white">
+                <div class="flex justify-between items-center p-8 bg-sky-50 border-b-4 border-sky-200">
+                    <h1 class="text-3xl font-black text-sky-900">Global Rankings</h1>
+                    <div class="flex gap-3">
+                        <a href="?cat=ALL" class="px-5 py-2 rounded-xl text-sm font-black {% if cat=='ALL' %}bg-sky-700 text-white shadow-lg{% else %}bg-white border-2 border-slate-200 text-slate-700{% endif %}">ALL</a>
+                        <a href="?cat=CPU" class="px-5 py-2 rounded-xl text-sm font-black {% if cat=='CPU' %}bg-sky-700 text-white shadow-lg{% else %}bg-white border-2 border-slate-200 text-slate-700{% endif %}">CPU</a>
+                        <a href="?cat=GPU" class="px-5 py-2 rounded-xl text-sm font-black {% if cat=='GPU' %}bg-sky-700 text-white shadow-lg{% else %}bg-white border-2 border-slate-200 text-slate-700{% endif %}">GPU</a>
                     </div>
                 </div>
                 <table class="w-full text-left">
-                    <tr class="bg-slate-50 text-xs text-slate-400 uppercase tracking-widest border-b border-slate-100"><th class="p-5 pl-8">Rank</th><th class="p-5">Name</th><th class="p-5">Price</th><th class="p-5 text-right pr-8">Score</th></tr>
+                    <tr class="bg-white text-xs text-sky-700 font-black uppercase tracking-widest border-b-2 border-sky-100"><th class="p-5 pl-8">Rank</th><th class="p-5">Name</th><th class="p-5">Price</th><th class="p-5 text-right pr-8">Score</th></tr>
                     {% for i in items %}
-                    <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                        <td class="p-5 pl-8 font-bold text-slate-400">#{{ (page-1)*15 + loop.index }}</td>
-                        <td class="p-5 font-bold text-slate-800 flex items-center gap-3"><span class="px-2 py-1 rounded text-[10px] font-bold {% if i.type == 'CPU' %}bg-blue-100 text-blue-700{% else %}bg-emerald-100 text-emerald-700{% endif %}">{{ i.type }}</span>{{ i.name }}</td>
-                        <td class="p-5 text-slate-600">₹{{ "{:,}".format(i.price) }}</td>
-                        <td class="p-5 pr-8 text-right font-mono text-cyan-600 font-bold text-lg">{{ "{:,}".format(i.score) }}</td>
+                    <tr class="border-b border-slate-200 hover:bg-sky-50 transition-colors">
+                        <td class="p-5 pl-8 font-black text-slate-500">#{{ (page-1)*15 + loop.index }}</td>
+                        <td class="p-5 font-black text-slate-900">{{ i.name }} <span class="ml-2 px-2 py-1 rounded text-[10px] font-black {% if i.type == 'CPU' %}bg-indigo-100 text-indigo-800{% else %}bg-emerald-100 text-emerald-800{% endif %}">{{ i.type }}</span></td>
+                        <td class="p-5 font-bold text-slate-700">₹{{ "{:,}".format(i.price) }}</td>
+                        <td class="p-5 pr-8 text-right font-mono font-black text-sky-600 text-lg">{{ "{:,}".format(i.score) }}</td>
                     </tr>
                     {% endfor %}
                 </table>
             </div>
 
-            <div class="flex justify-between items-center glass p-4 rounded-2xl">
-                {% if page > 1 %}<a href="?page={{ page-1 }}&cat={{ cat }}" class="px-6 py-3 bg-white border border-slate-200 rounded-xl font-bold text-slate-600 hover:text-cyan-600 transition-colors shadow-sm">← Prev 15</a>{% else %}<div class="px-6 py-3 opacity-0">Spacer</div>{% endif %}
-                <span class="text-slate-500 font-bold text-sm">Page <span class="text-slate-800">{{ page }}</span> of {{ total_pages }}</span>
-                {% if page < total_pages %}<a href="?page={{ page+1 }}&cat={{ cat }}" class="px-6 py-3 bg-white border border-slate-200 rounded-xl font-bold text-slate-600 hover:text-cyan-600 transition-colors shadow-sm">Next 15 →</a>{% else %}<div class="px-6 py-3 opacity-0">Spacer</div>{% endif %}
+            <div class="flex justify-between items-center vibrant-glass p-5 rounded-2xl bg-white">
+                {% if page > 1 %}<a href="?page={{ page-1 }}&cat={{ cat }}" class="px-8 py-3 bg-sky-100 text-sky-800 rounded-xl font-black hover:bg-sky-200 transition-colors border-2 border-sky-200">← Prev 15</a>{% else %}<div class="px-8 py-3 opacity-0">Spacer</div>{% endif %}
+                <span class="text-slate-600 font-black text-lg">Page <span class="text-sky-700">{{ page }}</span> of {{ total_pages }}</span>
+                {% if page < total_pages %}<a href="?page={{ page+1 }}&cat={{ cat }}" class="px-8 py-3 bg-sky-100 text-sky-800 rounded-xl font-black hover:bg-sky-200 transition-colors border-2 border-sky-200">Next 15 →</a>{% else %}<div class="px-8 py-3 opacity-0">Spacer</div>{% endif %}
             </div>
         </div>
     </div>
