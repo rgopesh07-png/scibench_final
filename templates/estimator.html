@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Estimator | SciBench</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { margin: 0; font-family: system-ui, sans-serif; color: #0f172a; }
+        .bg-vibrant-ambient { position: fixed; inset: 0; z-index: -2; background: linear-gradient(-45deg, #fef3c7, #fde047, #fef08a, #fef3c7); background-size: 400% 400%; animation: ambientLight 15s ease infinite; }
+        @keyframes ambientLight { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .star-pattern { position: fixed; inset: 0; z-index: -1; opacity: 0.5; background-image: radial-gradient(#64748b 1px, transparent 1px); background-size: 40px 40px; }
+        .vibrant-glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); border: 2px solid #eab308; box-shadow: 0 15px 35px rgba(234, 179, 8, 0.2); }
+    </style>
+</head>
+<body class="p-6 md:p-10 relative">
+    <div class="bg-vibrant-ambient"></div><div class="star-pattern"></div>
+    <a href="/" class="text-4xl font-black text-amber-600 mb-8 block w-max hover:scale-105 transition-transform">SCIBENCH</a>
+
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <aside class="lg:col-span-1 space-y-6">
+            <div class="vibrant-glass p-6 rounded-3xl">
+                <h3 class="text-amber-600 font-black uppercase tracking-widest text-sm mb-4">Module Analysis</h3>
+                <p class="text-slate-800 font-medium">Translates abstract benchmarks into actionable hours, setting realistic deadlines for research teams.</p>
+            </div>
+            <div class="vibrant-glass p-2 rounded-2xl">
+                <iframe class="w-full aspect-video rounded-xl" src="https://www.youtube.com/embed/E9O_4MLmBzc" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </aside>
+
+        <div class="lg:col-span-3">
+            <form method="POST" class="vibrant-glass p-8 rounded-[2rem] mb-8 grid md:grid-cols-3 gap-6">
+                <select name="cpu" required class="bg-slate-50 p-5 rounded-2xl text-slate-900 font-bold border-2 border-slate-300 focus:border-amber-500 outline-none">
+                    <option value="" disabled selected>Select CPU...</option>
+                    {% for c in cpus %}<option value="{{ c.id }}" {% if request.form.get('cpu') == c.id|string %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+                </select>
+                <select name="gpu" required class="bg-slate-50 p-5 rounded-2xl text-slate-900 font-bold border-2 border-slate-300 focus:border-amber-500 outline-none">
+                    <option value="" disabled selected>Select GPU...</option>
+                    {% for g in gpus %}<option value="{{ g.id }}" {% if request.form.get('gpu') == g.id|string %}selected{% endif %}>{{ g.name }}</option>{% endfor %}
+                </select>
+                <select name="workload" required class="bg-slate-50 p-5 rounded-2xl text-slate-900 font-bold border-2 border-slate-300 focus:border-amber-500 outline-none">
+                    <option value="5000000" {% if request.form.get('workload') == '5000000' %}selected{% endif %}>Medium: 10 Yr Climate</option>
+                    <option value="25000000" {% if request.form.get('workload') == '25000000' %}selected{% endif %}>Massive: Protein Folding</option>
+                    <option value="100000000" {% if request.form.get('workload') == '100000000' %}selected{% endif %}>God-Tier: Train AI</option>
+                </select>
+                <button type="submit" class="md:col-span-3 bg-amber-500 py-5 rounded-2xl font-black text-xl text-white hover:bg-amber-600 shadow-xl tracking-widest">CALCULATE TIME</button>
+            </form>
+
+            {% if data %}
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="vibrant-glass p-10 rounded-3xl text-center border-t-8 border-t-amber-500">
+                    <p class="text-7xl font-black text-amber-600 mb-2">{{ data.hours }}</p>
+                    <p class="text-sm text-slate-600 uppercase font-black tracking-widest mb-4">Total Hours</p>
+                    <p class="text-xl text-slate-800 font-black border-t-2 border-slate-200 pt-4">Approx. {{ data.days }} Days</p>
+                </div>
+                
+                {% if better_rec %}
+                <div class="vibrant-glass bg-blue-50 p-8 rounded-3xl border-2 border-blue-300 flex flex-col justify-center text-center">
+                    <h4 class="text-blue-700 font-black uppercase tracking-widest text-sm mb-4">Want it faster?</h4>
+                    <p class="text-slate-700 font-bold mb-2">Upgrade GPU to:</p>
+                    <p class="text-2xl font-black text-blue-900 mb-4">{{ better_rec.name }}</p>
+                    <p class="text-sm font-bold text-slate-700">Save approx <span class="text-emerald-600 font-black">45%</span> compute time.</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
